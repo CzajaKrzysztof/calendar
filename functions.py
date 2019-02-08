@@ -137,3 +137,35 @@ def remove(meeting_to_delete, meetings):
             new_meetings_list.append(entry)
 
     return new_meetings_list
+
+
+def validate_if_meeting_overlap(new_meeting, meetings):
+    """
+    Based on new meetings year-mont-day date construct temporary list with all
+    hours of meetings. Check if hours of new meeting are in temporary list
+    """
+    MEETING_LENGTH = 4
+    MEETING_HOUR = 3
+    result = False
+    date = join_date(*new_meeting[:3])
+    temp_meetings = []
+    new_meeting_temp = []
+
+    for entry in meetings:
+        if date == join_date(*entry[:3]):
+            temp_meetings.append(join_date(*entry[:4]))
+            if entry[MEETING_LENGTH] == '2':
+                entry[MEETING_HOUR] = str(int(entry[MEETING_HOUR]) + 1)
+                temp_meetings.append(join_date(*entry[:4]))
+
+    new_meeting_temp.append(join_date(*new_meeting[:4]))
+    if new_meeting[MEETING_LENGTH] == '2':
+        new_meeting[MEETING_HOUR] = str(int(new_meeting[MEETING_HOUR]) + 1)
+        new_meeting_temp.append(join_date(*new_meeting[:4]))
+
+    for entry in new_meeting_temp:
+        for meeting in temp_meetings:
+            if entry == meeting:
+                result = True
+
+    return result
