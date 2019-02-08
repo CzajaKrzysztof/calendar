@@ -23,21 +23,24 @@ def get_currnet_date():
     return current_date
 
 
-def join_date(year, month, day):
-    if len(str(month)) < 2:
-        month = '0' + str(month)
-    if len(str(day)) < 2:
-        day = '0' + str(day)
-
-    date = str(year) + str(month) + str(day)
+def join_date(*args):
+    date = ''
+    for elem in args:
+        if len(str(elem)) < 2:
+            elem = '0' + str(elem)
+        date = date + str(elem)
 
     return date
 
 
-def get_meeting_data():
+def get_meeting_data(full=True):
     meeting_data = []
+    if not full:
+        count = 4
+    else:
+        count = 6
     ui.simple_print('Shedul a new meeting:')
-    for question in range(6):
+    for question in range(count):
         is_answer_correct = False
         while not is_answer_correct:
             try:
@@ -48,11 +51,12 @@ def get_meeting_data():
                 if question == 2:
                     is_answer_correct = handle_digit_input(meeting_data, 'Enter meeting day', 1, 31)
                 if question == 3:
-                    is_answer_correct = handle_digit_input(meeting_data, 'Enter starting hour', 1, 24)
-                if question == 4:
-                    is_answer_correct = handle_digit_input(meeting_data, 'Enter meeting length', 1, 2)
-                if question == 5:
-                    is_answer_correct = handle_string_input(meeting_data, 'Enter meeting title')
+                    is_answer_correct = handle_digit_input(meeting_data, 'Enter starting hour (8 to 18)', 8, 18)
+                if full:
+                    if question == 4:
+                        is_answer_correct = handle_digit_input(meeting_data, 'Enter meeting length (1 or 2)', 1, 2)
+                    if question == 5:
+                        is_answer_correct = handle_string_input(meeting_data, 'Enter meeting title')
             except (ValueError, TypeError, NameError) as err:
                 ui.print_error(err)
 
@@ -110,3 +114,26 @@ def validate_string(string):
         is_a_valid_string = False
 
     return is_a_valid_string
+
+
+def validate_meeting_to_delete(meeting_to_delete, meetings):
+    """ Check if meeting to delete is in meetings list """
+    meeting_to_delete = join_date(*meeting_to_delete)
+    for entry in meetings:
+        meeting_date = join_date(*entry[:4])
+        if meeting_to_delete == meeting_date:
+            result = True
+        else:
+            result = False
+
+    return result
+
+
+def remove(meeting_to_delete, meetings):
+    new_meetings_list = []
+    meeting_to_delete = join_date(*meeting_to_delete)
+    for entry in meetings:
+        if not (meeting_to_delete == join_date(*entry[:4])):
+            new_meetings_list.append(entry)
+
+    return new_meetings_list

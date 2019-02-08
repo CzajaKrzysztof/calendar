@@ -25,7 +25,15 @@ def main():
             ui.print_main_menu()
             choice = ui.get_menu_choice()
         elif choice == 'c':
-            pass
+            meetings = storage.get_meetings_from_file(file_name)
+            meeting_to_delete = functions.get_meeting_data(False)
+            if functions.validate_meeting_to_delete(meeting_to_delete, meetings):
+                meetings = functions.remove(meeting_to_delete, meetings)
+                storage.write_table_to_file(file_name, meetings)
+            else:
+                ui.print_error('No entry for that date.')
+            ui.print_main_menu()
+            choice = ui.get_menu_choice()
 
 
 if __name__ == "__main__":

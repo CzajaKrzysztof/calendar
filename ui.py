@@ -38,7 +38,8 @@ def show_meetings(meetings_list, title, today='no'):
             else:
                 meeting_date = functions.join_date(*entry[:MEETING_START])
                 string = '{}-{}-{} {} - {} {}'
-                formating = [meeting_date[:4], meeting_date[5:6], meeting_date[7:8], entry[MEETING_START], meeting_end, entry[MEETING_TITLE]]
+                formating = [meeting_date[:4], meeting_date[5:6], meeting_date[7:8],
+                             entry[MEETING_START], meeting_end, entry[MEETING_TITLE]]
             print(string.format(*formating))
         print('\n')
 
@@ -48,10 +49,10 @@ def simple_print(text):
 
 
 def get_input(question):
-    answer = input(question + ': ')
+    answer = input(question + ': ').strip()
 
     return answer
 
 
 def print_error(message):
-    print('Error: ' + str(message))
+    print('\nERROR: ' + str(message))
