@@ -1,4 +1,10 @@
-def get_table_from_file(file_name):
+# shedule.csv file structure:
+# fields are seperated by ; sign
+# order of fields:
+#       year;month;day;start_hour;hours_amount;title
+
+
+def get_meetings_from_file(file_name):
     with open(file_name, "r") as file:
         lines = file.readlines()
     table = [element.replace("\n", "").split(";") for element in lines]
