@@ -1,9 +1,11 @@
 import ui
 import storage
 from datetime import datetime
+from copy import deepcopy
 
 
 def get_todays_meetings(meetings):
+    """ Retrive meeting only for current date. """
     today_meetings = []
     current_date = get_currnet_date()
     for meeting in meetings:
@@ -33,14 +35,26 @@ def join_date(*args):
     return date
 
 
-def get_meeting_data(full=True):
+def get_meeting_data(title, flag):
+    """
+    Asks user to input meeting data. All entered data are validated by handle functions
+    with given arguments.
+
+    Args:
+        title - information what are inputs for
+        flag - "all" for use in new meeting - all questions
+             - "edit" for use in edit meeting - questions 1 - 4
+             - "cancel" for use in canceling meeting - question 3 only
+    """
     meeting_data = []
-    if not full:
-        count = 4
-    else:
-        count = 6
-    ui.simple_print('Shedul a new meeting:')
-    for question in range(count):
+    if flag == 'all':
+        count = range(6)
+    elif flag == 'edit':
+        count = range(4)
+    elif flag == 'cancel':
+        count = range(3, 4)
+    ui.simple_print('\n' + title + ':')
+    for question in count:
         is_answer_correct = False
         while not is_answer_correct:
             try:
@@ -52,11 +66,10 @@ def get_meeting_data(full=True):
                     is_answer_correct = handle_digit_input(meeting_data, 'Enter meeting day', 1, 31)
                 if question == 3:
                     is_answer_correct = handle_digit_input(meeting_data, 'Enter starting hour (8 to 18)', 8, 18)
-                if full:
-                    if question == 4:
-                        is_answer_correct = handle_digit_input(meeting_data, 'Enter meeting length (1 or 2)', 1, 2)
-                    if question == 5:
-                        is_answer_correct = handle_string_input(meeting_data, 'Enter meeting title')
+                if question == 4:
+                    is_answer_correct = handle_digit_input(meeting_data, 'Enter meeting length (1 or 2)', 1, 2)
+                if question == 5:
+                    is_answer_correct = handle_string_input(meeting_data, 'Enter meeting title')
             except (ValueError, TypeError, NameError) as err:
                 ui.print_error(err)
 
@@ -64,16 +77,24 @@ def get_meeting_data(full=True):
 
 
 def handle_string_input(meeting_data, question):
+    """
+    Ask user to provide input data and calls for validation function to chech if input is correct.
+    Return True if input correct or False if not.
+    """
     is_answer_correct = False
-    title = ui.get_input(question)
-    if validate_string(title):
+    answer = ui.get_input(question)
+    if validate_string(answer):
         is_answer_correct = True
-        meeting_data.append(title)
+        meeting_data.append(answer)
 
     return is_answer_correct
 
 
 def handle_digit_input(list_, question, start, end):
+    """
+    Ask user to provide input data and calls for validation function to chech if input is correct.
+    Return True if input correct or False if not.
+    """
     is_answer_correct = False
     answer = ui.get_input(question)
     if validate_digit(answer, start, end):
@@ -108,6 +129,7 @@ def validate_digit(digit, start, end):
 
 
 def validate_string(string):
+    """ String can't be empty """
     is_a_valid_string = True
     if not string:
         ui.print_error('You must enter something')
@@ -116,20 +138,22 @@ def validate_string(string):
     return is_a_valid_string
 
 
-def validate_meeting_to_delete(meeting_to_delete, meetings):
-    """ Check if meeting to delete is in meetings list """
-    meeting_to_delete = join_date(*meeting_to_delete)
+def validate_meeting(meeting_to_validate, meetings):
+    """
+    Check if meeting is in meetings list.
+    Return True if given meeting date is in meetings data
+    """
+    result = False
+    meeting_to_validate = join_date(*meeting_to_validate)
     for entry in meetings:
         meeting_date = join_date(*entry[:4])
-        if meeting_to_delete == meeting_date:
+        if meeting_to_validate == meeting_date:
             result = True
-        else:
-            result = False
 
     return result
 
 
-def remove(meeting_to_delete, meetings):
+def cancel(meeting_to_delete, meetings):
     new_meetings_list = []
     meeting_to_delete = join_date(*meeting_to_delete)
     for entry in meetings:
@@ -142,30 +166,56 @@ def remove(meeting_to_delete, meetings):
 def validate_if_meeting_overlap(new_meeting, meetings):
     """
     Based on new meetings year-mont-day date construct temporary list with all
-    hours of meetings. Check if hours of new meeting are in temporary list
+    hours of meetings. Check if hours of new meeting are in temporary list.
+
+    Return "True" if meeting is overlapin another, "False" if is not overlaping
     """
+    new_meet_copy = deepcopy(new_meeting)
+    meetings_copy = deepcopy(meetings)
     MEETING_LENGTH = 4
     MEETING_HOUR = 3
     result = False
-    date = join_date(*new_meeting[:3])
-    temp_meetings = []
-    new_meeting_temp = []
+    date = join_date(*new_meet_copy[:3])
+    temp_meetings_copy = []
+    new_meet_copy_temp = []
 
-    for entry in meetings:
+    for entry in meetings_copy:
         if date == join_date(*entry[:3]):
-            temp_meetings.append(join_date(*entry[:4]))
+            temp_meetings_copy.append(join_date(*entry[:4]))
             if entry[MEETING_LENGTH] == '2':
                 entry[MEETING_HOUR] = str(int(entry[MEETING_HOUR]) + 1)
-                temp_meetings.append(join_date(*entry[:4]))
+                temp_meetings_copy.append(join_date(*entry[:4]))
 
-    new_meeting_temp.append(join_date(*new_meeting[:4]))
-    if new_meeting[MEETING_LENGTH] == '2':
-        new_meeting[MEETING_HOUR] = str(int(new_meeting[MEETING_HOUR]) + 1)
-        new_meeting_temp.append(join_date(*new_meeting[:4]))
-
-    for entry in new_meeting_temp:
-        for meeting in temp_meetings:
+    new_meet_copy_temp.append(join_date(*new_meet_copy[:4]))
+    if new_meet_copy[MEETING_LENGTH] == '2':
+        new_meet_copy[MEETING_HOUR] = str(int(new_meet_copy[MEETING_HOUR]) + 1)
+        new_meet_copy_temp.append(join_date(*new_meet_copy[:4]))
+    for entry in new_meet_copy_temp:
+        for meeting in temp_meetings_copy:
             if entry == meeting:
                 result = True
 
     return result
+
+
+def get_meeting_index(meeting_data, meetings):
+    meeting_hour = join_date(*meeting_data[:4])
+    index = 0
+    for entry in meetings:
+        if meeting_hour == join_date(*entry[:4]):
+            result = index
+        index += 1
+
+    return result
+
+
+def edit_meeting_data(meeting_data, meetings):
+    meeting_index = get_meeting_index(meeting_data, meetings)
+    meetings.pop(meeting_index)
+    edited_data = get_meeting_data('Enter new data for edited meeting', 'all')
+    if validate_if_meeting_overlap(edited_data, meetings):
+        ui.print_error('New data for meeging is overlaping existing meeting.')
+    else:
+        meetings.insert(meeting_index, edited_data)
+
+    return meetings

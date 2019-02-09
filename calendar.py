@@ -10,8 +10,11 @@ def main():
         if choice == 's':
             handlers.shedule_meeting(file_name)
             choice = ui.default_view()
+        elif choice == 'e':
+            handlers.edit_meeting(file_name)
+            choice = ui.default_view()
         elif choice == 'c':
-            handlers.remove_meeting(file_name)
+            handlers.cancel_meeting(file_name)
             choice = ui.default_view()
 
 
