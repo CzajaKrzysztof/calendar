@@ -28,10 +28,30 @@ def default_view():
     return choice
 
 
-def show_meetings(meetings_list, title, today='no'):
+def show_meetings(meetings_list, title, today='no', hours_count=False):
+    """
+    Print out meetings
+
+    Params:
+        meetings_list - list of lists containig
+                        sheduled meetings
+        today: "yes" - print meeting in format
+                       for present day
+               "no"(default) - print meetings 
+                       in format with full date
+        hours_count: True - prist total count of
+                            meetings hours
+                     False(default) - don't show
+                            total count of meetins hours
+    """
     MEETING_START = 3
     MEETING_LENGTH = 4
     MEETING_TITLE = 5
+
+    hours_total = 0
+    for entry in meetings_list:
+        hours_total += int(entry[MEETING_LENGTH])
+
     print('\n' + title + ':')
     if len(meetings_list) == 0:
         print('(empty)\n')
@@ -50,6 +70,8 @@ def show_meetings(meetings_list, title, today='no'):
                              entry[MEETING_START], meeting_end, entry[MEETING_TITLE]]
             print(string.format(*formating))
         print('\n')
+        if hours_count:
+            print('Total count of meetings hours is {}'.format(hours_total))
 
 
 def simple_print(text):

@@ -9,7 +9,7 @@ def program_start(file_name):
     os.system('clear')
     meetings = storage.get_meetings_from_file(file_name)
     today_meeting = functions.get_todays_meetings(meetings)
-    ui.show_meetings(today_meeting, 'Your shedule for today', 'yes')
+    ui.show_meetings(today_meeting, 'Your shedule for today', 'yes', True)
 
 
 def shedule_meeting(file_name):
