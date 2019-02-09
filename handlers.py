@@ -9,10 +9,6 @@ def program_start(file_name):
     meetings = storage.get_meetings_from_file(file_name)
     today_meeting = functions.get_todays_meetings(meetings)
     ui.show_meetings(today_meeting, 'Your shedule for today', 'yes')
-    ui.print_main_menu()
-    choice = ui.get_menu_choice()
-
-    return choice
 
 
 def shedule_meeting(file_name):
@@ -26,10 +22,6 @@ def shedule_meeting(file_name):
         storage.write_table_to_file(file_name, meetings)
         os.system('clear')
         ui.show_meetings([new_meeting], 'Meeting added', 'no')
-    ui.print_main_menu()
-    choice = ui.get_menu_choice()
-
-    return choice
 
 
 def remove_meeting(file_name):
@@ -40,7 +32,3 @@ def remove_meeting(file_name):
         storage.write_table_to_file(file_name, meetings)
     else:
         ui.print_error('No entry for that date.')
-    ui.print_main_menu()
-    choice = ui.get_menu_choice()
-
-    return choice

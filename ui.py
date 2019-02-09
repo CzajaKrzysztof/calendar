@@ -20,6 +20,13 @@ def get_menu_choice():
     return answer
 
 
+def default_view():
+    print_main_menu()
+    choice = get_menu_choice()
+
+    return choice
+
+
 def show_meetings(meetings_list, title, today='no'):
     MEETING_START = 3
     MEETING_LENGTH = 4
