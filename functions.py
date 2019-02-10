@@ -6,12 +6,18 @@ from copy import deepcopy
 
 def get_todays_meetings(meetings):
     """ Retrive meeting only for current date. """
+    MEETING_HOUR = 3
     today_meetings = []
     current_date = get_currnet_date()
     for meeting in meetings:
         meeting_date = join_date(*meeting[:3])
         if current_date == meeting_date:
+            meeting[MEETING_HOUR] = int(meeting[MEETING_HOUR])
             today_meetings.append(meeting)
+    today_meetings.sort(key=lambda x: x[MEETING_HOUR])
+
+    for entry in today_meetings:
+        entry[MEETING_HOUR] = str(entry[MEETING_HOUR])
 
     return today_meetings
 
@@ -219,3 +225,15 @@ def edit_meeting_data(meeting_data, meetings):
         meetings.insert(meeting_index, edited_data)
 
     return meetings
+
+
+def compact(today_meetings):
+    MEETING_START_INDEX = 3
+    MEETING_LENGTH_INDEX = 4
+    first_free_hour = 8
+    for entry in today_meetings:
+        entry[MEETING_START_INDEX] = str(first_free_hour)
+        first_free_hour += int(entry[MEETING_LENGTH_INDEX])
+
+    for i in today_meetings:
+        print(i, 'compact')

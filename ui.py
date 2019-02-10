@@ -4,8 +4,9 @@ import functions
 def print_main_menu():
     print('Menu:\n'
           '(s) shedul a new meeting\n'
-          '(e) edit sheduled meeting\n'
+          '(p) postpone sheduled meeting\n'
           '(c) cancel an existing meeting\n'
+          '(e) compact meetings\n'
           '(q) quit')
 
 
@@ -13,7 +14,7 @@ def get_menu_choice():
     is_answer_correct = False
     while not is_answer_correct:
         answer = input('\nYour choice: ')
-        if answer not in ['s', 'e', 'c', 'q']:
+        if answer not in ['s', 'p', 'c', 'e', 'q']:
             print('Menu options are "s", "c" and "q"! Try again.')
         else:
             is_answer_correct = True
@@ -37,7 +38,7 @@ def show_meetings(meetings_list, title, today='no', hours_count=False):
                         sheduled meetings
         today: "yes" - print meeting in format
                        for present day
-               "no"(default) - print meetings 
+               "no"(default) - print meetings
                        in format with full date
         hours_count: True - prist total count of
                             meetings hours
@@ -66,7 +67,7 @@ def show_meetings(meetings_list, title, today='no', hours_count=False):
             else:
                 meeting_date = functions.join_date(*entry[:MEETING_START])
                 string = '{}-{}-{} {} - {} {}'
-                formating = [meeting_date[:4], meeting_date[5:6], meeting_date[7:8],
+                formating = [meeting_date[:4], meeting_date[4:6], meeting_date[6:8],
                              entry[MEETING_START], meeting_end, entry[MEETING_TITLE]]
             print(string.format(*formating))
         print('\n')
